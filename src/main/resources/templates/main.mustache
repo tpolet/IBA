@@ -1,0 +1,26 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/logout" method="post">
+    <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+    <input type="submit" value="Sign Out"/>
+</form>
+<div>
+    <form method="post">
+        <input type="text" name="log" placeholder="SQL query">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+        <button type="submit">Execute</button>
+    </form>
+</div>
+<div>LOG</div>
+{{#logs}}
+    <div>
+        <b> {{id}}</b>
+        <span> {{log}}</span>
+    </div>
+{{/logs}}
+</body>
+</html>
