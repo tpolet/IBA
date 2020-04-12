@@ -1,8 +1,10 @@
 package com.tpolet.SQL.controller;
 
 import com.tpolet.SQL.domain.Message;
+import com.tpolet.SQL.domain.Role;
 import com.tpolet.SQL.domain.User;
 import com.tpolet.SQL.repos.MessageRepos;
+import com.tpolet.SQL.support.SQLSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +24,8 @@ public class MainController {
     @Autowired
     MessageRepos messageRepos;
 
+    SQLSupport sqlSupport;
+
     @GetMapping("/")
     public String greeting(String name, Map<String, Object> model) {
 
@@ -37,16 +41,38 @@ public class MainController {
         return "main";
     }
 
+//    @PostMapping("/main")
+//    public String add(Principal user,
+//                      @RequestParam String log,
+//                      Map<String, Object> model) {
+//
+//        User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        Message message = new Message(log, u);
+//        messageRepos.save(message);
+//        Iterable<Message> logs = messageRepos.findAll();
+//        model.put("logs", logs);
+//        return "main";
+//    }
+
     @PostMapping("/main")
-  //  @CurrentUser UserDetailsImpl userDetailsImpl
-    public String add(Principal user,
-                          @RequestParam String log,
-                      Map<String, Object> model) {
+    public String addMessage(Principal user,
+                             @RequestParam String log,
+                             Map<String, Object> model) {
+        sqlSupport = new SQLSupport();
+        User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!u.getRoles().contains(Role.ADMIN)) {
+            if (sqlSupport.isSelect(log)) {
+                Message message = sqlSupport.executeSQL(log, u);
+                messageRepos.save(message);
+            } else {
+                model.put("warning", "NO PREMITION");
+            }
+        } else {
+            Message message = sqlSupport.executeSQL(log, u);
+            messageRepos.save(message);
+        }
 
-    User u=(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Message message = new Message(log,u);
-        messageRepos.save(message);
         Iterable<Message> logs = messageRepos.findAll();
         model.put("logs", logs);
         return "main";

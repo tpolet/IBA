@@ -16,11 +16,22 @@
     </form>
 </div>
 <div>LOG</div>
+
+
+{{#warning}}
+    <b> {{warning}}</b>
+{{/warning}}
+
+
+
 {{#logs}}
     <div>
         <b> {{id}}</b>
         <span> {{log}}</span>
+        <span> {{result}}</span>
+        <span> {{author}}</span>
     </div>
 {{/logs}}
+
 </body>
 </html>
