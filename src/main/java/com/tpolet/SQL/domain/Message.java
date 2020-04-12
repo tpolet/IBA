@@ -1,9 +1,6 @@
 package com.tpolet.SQL.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Message {
@@ -13,12 +10,35 @@ public class Message {
     private String log;
     private String result;
 
+@ManyToOne(fetch = FetchType.EAGER)
+@JoinColumn(name="user_id")
+private User author;
+
     public Message()  {
     }
 
     public Message(String log, String result) {
         this.log = log;
         this.result = result;
+    }
+
+    public Message(String log, User author) {
+        this.log = log;
+        this.author = author;
+    }
+
+     public Message(String log, String result, User author) {
+        this.log = log;
+        this.result = result;
+        this.author = author;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public Message(String log) {
